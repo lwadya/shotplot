@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Shot Plot</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='stylesheets/index.css') }}">
+  </head>
+  <body>
+
+    <div class="page">
+
+    <div class="title">
+      <p>Shot Plot</p>
+    </div>
+
+    <div class="form">
+      <form action="/" method='POST'>
+        <input type="file" name="filename" onchange="form.submit()">
+        <input type="submit" method="get" style="display:none">
+      </form>
+    </div>
+
+    <div class="results">
+      {% if filename %}
+        {% if error %}
+          <p>Error: {{ error }}</p>
+        {% else %}
+          <div id="graphs">
+            <div id="graphs_middle">
+              <span id="vert_hmap"></span>
+              <span id="target"></span>
+              <span id="score_hmap"></span>
+            </div>
+            <div id="hori_hmap"></div>
+          </div>
+
+          <h1>Filename:</h1>
+          <p>{{ filename }}</p>
+
+          <h1>Stats:</h1>
+          <p>{{ stats.size }}</p>
+          <p>{{ stats.mean_score }}</p>
+          <p>{{ stats.mean_op_score }}</p>
+          <p>{{ stats.score_hist|join(' ') }}</p>
+          <p>{{ stats.score_hmap|join(' ') }}</p>
+          <p>{{ stats.op_score_hist|join(' ') }}</p>
+          <p>{{ stats.op_score_hmap|join(' ') }}</p>
+          <p>{{ stats.x_hist|join(' ') }}</p>
+          <p>{{ stats.x_hmap|join(' ') }}</p>
+          <p>{{ stats.y_hist|join(' ') }}</p>
+          <p>{{ stats.y_hmap|join(' ') }}</p>
+
+          <h1>Shot Data:</h1>
+          {% for shot in shots %}
+            <p>{{ shot.x }}, {{ shot.y }}, {{ shot.score }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endif %}
+    </div>
+    <!--
+    <div class="results">
+      {% if recos %}
+        <table class="table">
+        {% for reco in recos %}
+          <tr class="table_row">
+            <th class="table_name">
+              <div class="div_name">
+                <a href="{{ reco.url }}" target="_blank" class="link_name">
+                  {{ reco.name }}
+                </a>
+              </div>
+            </th>
+            <th class="table_image">
+              <a href="{{ reco.url }}" target="_blank">
+                <img src="{{ reco.image }}" class="reco_image">
+              </a>
+            </th>
+            <th class="table_ingredient">
+              <ul>
+                {% for ingredient in reco.ingredients %}
+                  <li>{{ ingredient }}</li>
+                {% endfor %}
+              </ul>
+            </th>
+          </tr>
+        {% endfor %}
+        </table>
+      {% else %}
+        {% if last_search %}
+          <p class="failure">Sorry, I couldn't find anything with those search terms</p>
+        {% endif %}
+      {% endif %}
+    </div>
+    -->
+    </div>
+
+    <script>
+      // Shared graph settings
+      var trg_size = {{ stats.trg_size }};
+      var shot_size = {{ stats.shot_size }};
+      var score_step = {{ stats.score_step }};
+      var hmap_size = Math.ceil(trg_size / 15);
+      var hmap_hue = 220;
+      var hmap_sat = .8;
+
+      // Creates target plot
+      var trg_circ_cnt = [...Array(10).keys()].map(i => i+1);
+
+      var trg_svg = d3.select("#target")
+                      .append("svg")
+                      .attr("width", trg_size)
+                      .attr("height", trg_size);
+      var trg_circ_grp = trg_svg.append("g");
+      var trg_shots_grp = trg_svg.append("g");
+      var trg_circ = trg_circ_grp.selectAll("circle")
+                      .data(trg_circ_cnt)
+                      .enter()
+                      .append("circle")
+                      .attr("cx", trg_size/2)
+                      .attr("cy", trg_size/2)
+                      .attr("r", function(d) { return d*score_step; })
+                      .style("fill", "none")
+                      .style("stroke", "gray")
+                      .style("stroke-width", 2);
+      var trg_shots = trg_shots_grp.selectAll("circle")
+                        .data({{ shots|tojson|safe }})
+                        .enter()
+                        .append("circle")
+                        .attr("cx", function(d) { return d.x; })
+                        .attr("cy", function(d) { return d.y; })
+                        .attr("r", shot_size)
+                        .style("fill", "red");
+
+      // Creates scoring heatmap
+      var s_hmap = {{ stats.score_hmap }}.reverse();
+      var s_hmap_step = Math.ceil(trg_size / s_hmap.length);
+
+      var shm_svg = d3.select("#score_hmap")
+                      .append("svg")
+                      .attr("width", hmap_size)
+                      .attr("height", trg_size);
+      var shm_rect_grp = shm_svg.append("g");
+      var shm_rect = shm_rect_grp.selectAll("rect")
+                      .data(s_hmap)
+                      .enter()
+                      .append("rect")
+                      .attr("x", 0)
+                      .attr("y", function(d,i) { return i*s_hmap_step; })
+                      .attr("height", s_hmap_step)
+                      .attr("width", hmap_size)
+                      .style("fill", function(d) {
+                        return d3.hsl(hmap_hue, hmap_sat, d); });
+
+      // Creates vertical spread heatmap
+      var y_hmap = {{ stats.y_hmap }};
+      var y_hmap_step = Math.ceil(trg_size / y_hmap.length);
+
+      var vhm_svg = d3.select("#vert_hmap")
+                      .append("svg")
+                      .attr("width", hmap_size)
+                      .attr("height", trg_size);
+      var vhm_rect_grp = vhm_svg.append("g");
+      var vhm_rect = vhm_rect_grp.selectAll("rect")
+                      .data(y_hmap)
+                      .enter()
+                      .append("rect")
+                      .attr("x", 0)
+                      .attr("y", function(d,i) { return i*y_hmap_step; })
+                      .attr("height", y_hmap_step)
+                      .attr("width", hmap_size)
+                      .style("fill", function(d) {
+                        return d3.hsl(hmap_hue, hmap_sat, d); });
+
+      // Creates horizontal spread heatmap
+      var x_hmap = {{ stats.x_hmap }};
+      var x_hmap_step = Math.ceil(trg_size / x_hmap.length);
+
+      var hhm_svg = d3.select("#hori_hmap")
+                      .append("svg")
+                      .attr("width", trg_size)
+                      .attr("height", hmap_size);
+      var hhm_rect_grp = hhm_svg.append("g");
+      var hhm_rect = hhm_rect_grp.selectAll("rect")
+                      .data(x_hmap)
+                      .enter()
+                      .append("rect")
+                      .attr("x", function(d,i) { return i*x_hmap_step; })
+                      .attr("y", 0)
+                      .attr("height", hmap_size)
+                      .attr("width", x_hmap_step)
+                      .style("fill", function(d) {
+                        return d3.hsl(hmap_hue, hmap_sat, d); });
+
+    </script>
+
+  </body>
+</html>
