@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Shot Plot</title>
+    <title>Title Here</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <link rel="stylesheet"
@@ -13,12 +13,13 @@
     <div class="page">
 
     <div class="title">
-      <p>Shot Plot</p>
+      <p>Title Here</p>
     </div>
 
     <div class="form">
       <form action="/" method='POST'>
-        <input type="file" name="filename" onchange="form.submit()">
+        <input type="file" name="filename" id="select_file" onchange="form.submit()" style="display:none">
+        <input type="button" value="Load Target Image" onclick="document.getElementById('select_file').click()">
         <input type="submit" method="get" style="display:none">
       </form>
     </div>
@@ -28,11 +29,18 @@
         {% if error %}
           <p>Error: {{ error }}</p>
         {% else %}
-          <div id="graphs">
-            <div id="graphs_middle">
+          <div id="summary">
+            <div id="true_score"></div>
+            <div id="op_score"></div>
+            <div id="score_hmap"></div>
+          </div>
+          <div id="recos">
+
+          </div>
+          <div id="details">
+            <div id="details_upper">
               <span id="vert_hmap"></span>
               <span id="target"></span>
-              <span id="score_hmap"></span>
             </div>
             <div id="hori_hmap"></div>
           </div>
@@ -102,9 +110,90 @@
       var trg_size = {{ stats.trg_size }};
       var shot_size = {{ stats.shot_size }};
       var score_step = {{ stats.score_step }};
-      var hmap_size = Math.ceil(trg_size / 15);
+      var bar_size = Math.ceil(trg_size / 14);
+      var hmap_size = Math.ceil(trg_size / 14);
       var hmap_hue = 220;
       var hmap_sat = .8;
+
+      // Creates true score bar graph
+      var true_score = {{ stats.mean_score }};
+
+      var ts_svg = d3.select("#true_score")
+                    .append("svg")
+                    .attr("width", trg_size)
+                    .attr("height", bar_size);
+      var ts_bg = ts_svg.append("rect")
+                    .attr("width", trg_size)
+                    .attr("height", bar_size)
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .style("fill", "lightgray");
+      var ts_graph = ts_svg.append("rect")
+                        .attr("width", true_score / 10 * trg_size)
+                        .attr("height", bar_size)
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .style("fill", "seagreen");
+
+      // Creates optimized score bar graph
+      var op_score = {{ stats.mean_op_score }};
+
+      var os_svg = d3.select("#op_score")
+                    .append("svg")
+                    .attr("width", trg_size)
+                    .attr("height", bar_size);
+      var os_bg = os_svg.append("rect")
+                    .attr("width", trg_size)
+                    .attr("height", bar_size)
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .style("fill", "lightgray");
+      var os_graph = os_svg.append("rect")
+                        .attr("width", op_score / 10 * trg_size)
+                        .attr("height", bar_size)
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .style("fill", "forestgreen");
+
+      // Creates scoring heatmap
+      var s_hmap = {{ stats.score_hmap }};
+      var s_hmap_step = trg_size / s_hmap.length;
+
+      var shm_svg = d3.select("#score_hmap")
+                      .append("svg")
+                      .attr("width", trg_size)
+                      .attr("height", hmap_size);
+      var shm_rect_grp = shm_svg.append("g");
+      var shm_rect = shm_rect_grp.selectAll("rect")
+                      .data(s_hmap)
+                      .enter()
+                      .append("rect")
+                      .attr("x", function(d,i) { return i*s_hmap_step; })
+                      .attr("y", 0)
+                      .attr("height", hmap_size)
+                      .attr("width", Math.ceil(s_hmap_step))
+                      .style("fill", function(d) {
+                        return d3.hsl(hmap_hue, hmap_sat, d); });
+
+      // Creates vertical spread heatmap
+      var y_hmap = {{ stats.y_hmap }};
+      var y_hmap_step = trg_size / y_hmap.length;
+
+      var vhm_svg = d3.select("#vert_hmap")
+                      .append("svg")
+                      .attr("width", hmap_size)
+                      .attr("height", trg_size);
+      var vhm_rect_grp = vhm_svg.append("g");
+      var vhm_rect = vhm_rect_grp.selectAll("rect")
+                      .data(y_hmap)
+                      .enter()
+                      .append("rect")
+                      .attr("x", 0)
+                      .attr("y", function(d,i) { return i*y_hmap_step; })
+                      .attr("height", Math.ceil(y_hmap_step))
+                      .attr("width", hmap_size)
+                      .style("fill", function(d) {
+                        return d3.hsl(hmap_hue, hmap_sat, d); });
 
       // Creates target plot
       var trg_circ_cnt = [...Array(10).keys()].map(i => i+1);
@@ -123,7 +212,7 @@
                       .attr("cy", trg_size/2)
                       .attr("r", function(d) { return d*score_step; })
                       .style("fill", "none")
-                      .style("stroke", "gray")
+                      .style("stroke", "lightgray")
                       .style("stroke-width", 2);
       var trg_shots = trg_shots_grp.selectAll("circle")
                         .data({{ shots|tojson|safe }})
@@ -134,49 +223,9 @@
                         .attr("r", shot_size)
                         .style("fill", "red");
 
-      // Creates scoring heatmap
-      var s_hmap = {{ stats.score_hmap }}.reverse();
-      var s_hmap_step = Math.ceil(trg_size / s_hmap.length);
-
-      var shm_svg = d3.select("#score_hmap")
-                      .append("svg")
-                      .attr("width", hmap_size)
-                      .attr("height", trg_size);
-      var shm_rect_grp = shm_svg.append("g");
-      var shm_rect = shm_rect_grp.selectAll("rect")
-                      .data(s_hmap)
-                      .enter()
-                      .append("rect")
-                      .attr("x", 0)
-                      .attr("y", function(d,i) { return i*s_hmap_step; })
-                      .attr("height", s_hmap_step)
-                      .attr("width", hmap_size)
-                      .style("fill", function(d) {
-                        return d3.hsl(hmap_hue, hmap_sat, d); });
-
-      // Creates vertical spread heatmap
-      var y_hmap = {{ stats.y_hmap }};
-      var y_hmap_step = Math.ceil(trg_size / y_hmap.length);
-
-      var vhm_svg = d3.select("#vert_hmap")
-                      .append("svg")
-                      .attr("width", hmap_size)
-                      .attr("height", trg_size);
-      var vhm_rect_grp = vhm_svg.append("g");
-      var vhm_rect = vhm_rect_grp.selectAll("rect")
-                      .data(y_hmap)
-                      .enter()
-                      .append("rect")
-                      .attr("x", 0)
-                      .attr("y", function(d,i) { return i*y_hmap_step; })
-                      .attr("height", y_hmap_step)
-                      .attr("width", hmap_size)
-                      .style("fill", function(d) {
-                        return d3.hsl(hmap_hue, hmap_sat, d); });
-
       // Creates horizontal spread heatmap
       var x_hmap = {{ stats.x_hmap }};
-      var x_hmap_step = Math.ceil(trg_size / x_hmap.length);
+      var x_hmap_step = trg_size / x_hmap.length;
 
       var hhm_svg = d3.select("#hori_hmap")
                       .append("svg")
@@ -190,7 +239,7 @@
                       .attr("x", function(d,i) { return i*x_hmap_step; })
                       .attr("y", 0)
                       .attr("height", hmap_size)
-                      .attr("width", x_hmap_step)
+                      .attr("width", Math.ceil(x_hmap_step))
                       .style("fill", function(d) {
                         return d3.hsl(hmap_hue, hmap_sat, d); });
 
