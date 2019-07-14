@@ -1,0 +1,122 @@
+.page {
+  text-align: center;
+  margin: auto;
+  width: 55%;
+  padding-top: 6em;
+  font-family: sans-serif;
+  padding-bottom: 3em;
+}
+
+.title {
+  padding-bottom: 1.5em;
+}
+
+.image_title {
+  max-width:90%;
+  max-height:90%;
+}
+
+#upload_button {
+  font-size: 1em;
+  font-weight: bold;
+  padding: .75em 1.25em;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.results {
+  padding-top: 2.5em;
+}
+
+ul {
+  list-style-type: circle;
+  width: inherit;
+  height: inherit;
+}
+
+a:link, a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+.link_name {
+  font-size: 1.2em;
+  font-weight: 300;
+  line-height: 1.3em;
+  letter-spacing: .15em;
+  margin-left: auto;
+  margin-right: auto;
+  display: table-caption;
+  padding: .7em;
+  border: .07em solid #000;
+}
+
+.div_name {
+  display: inline-block;
+}
+
+.failure {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+
+#summary, #recos, #charts {
+  border: .07em solid #000;
+  margin-top: 1em;
+  padding: .5em 1em 2em 1em;
+}
+
+#recos {
+  text-align: left;
+  padding-left: 3em;
+  padding-right: 3em;
+  padding-bottom: 1em;
+}
+
+.reco_list {
+  padding-right: 2em;
+}
+
+.reco_item {
+  padding-bottom: .5em;
+}
+
+#charts_align {
+  text-align: right;
+  display: inline-block;
+  padding-top: .5em;
+  padding-right: 1.5em;
+}
+
+#hori_hmap {
+  margin-top: 1.5em;
+  margin-right: .3em;
+  display: inline-block;
+  text-align: right;
+}
+
+#target {
+  margin-left: 1.5em;
+}
+
+.section_label {
+  text-align: center;
+}
+
+#summary_content {
+  text-align: left;
+  display: inline-block;
+}
+
+.help {
+  padding-top: 1em;
+  display: inline-block;
+  width: 250px;
+}
+
+.page_end {
+  padding-top: 4em;
+}

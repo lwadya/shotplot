@@ -4,10 +4,17 @@ import cv2
 
 
 class target_reader:
+    '''
+    Reads in an image of a used archery target and uses openCV to determine
+    position and score value for each shot. __init__ initializes session
+    settings and run performs analysis.
+    '''
 
     # Class-wide settings
+    # Real-world target dimensions in cm
     cm_width = 42
     blue_ratio = 24 / cm_width
+    # HSV ranges for colored regions of the target
     colors = {
         'yellow': [{'low': np.array([15, 130, 130]),
                     'high': np.array([45, 255, 255])}],
@@ -20,6 +27,7 @@ class target_reader:
         'black': [{'low': np.array([0, 0, 0]),
                    'high': np.array([180, 255, 130])}],
     }
+    # Counting order of outer ring for each colored region
     color_steps = {
         'yellow': 2,
         'red': 4,
@@ -27,15 +35,32 @@ class target_reader:
         'black': 8
     }
 
-    # init function, only changes settings
     def __init__(self, out_width=600):
+        '''
+        Establishes the output width of the processed target images
+
+        Args:
+            out_width (int): width/height of processed images in pixels
+
+        Returns:
+            None
+        '''
         self.out_width = out_width
         self.score_step = out_width * 2 / self.cm_width
         return None
 
-    # run function, processes image and returns status message and dataframe if
-    # successful
     def run(self, filename):
+        '''
+        Runs all methods for image processing and scoring. Returns None if
+        analysis is successful, error message if not. Results are saved in the
+        class variable 'df' and image steps in 'stage_images.'
+
+        Args:
+            filename (str): filepath of the image to analyze
+
+        Returns:
+            None if successful, str containing error message if not
+        '''
         # Resets class variables
         self.orig_image = None
         self.image = None
@@ -65,9 +90,17 @@ class target_reader:
 
         return None
 
-    # remove_skew function, unskews perspective by matching target corners to
-    # image corners
     def remove_skew(self):
+        '''
+        Unskews perspective by moving each target corner to the corner of a new
+        image
+
+        Args:
+            None
+
+        Returns:
+            None if successful, True if not
+        '''
         # Function settings
         gray_width = 600
         filter_d = gray_width // 20
@@ -149,8 +182,17 @@ class target_reader:
         self.stage_images.append(img.copy())
         return None
 
-    # standardize_size function, resizes image to fit standard template
     def standardize_size(self):
+        '''
+        Resizes image to fit the standard template - meaning image and inner
+        target circle dimensions match preset values
+
+        Args:
+            None
+
+        Returns:
+            None if successful, True if not
+        '''
         # Function settings
         keys = ['yellow', 'red', 'blue']
         close_kernel = 2
@@ -210,9 +252,17 @@ class target_reader:
         self.stage_images.append(img.copy())
         return None
 
-    # balance_contrast function, adjusts image values to make holes easier to
-    # detect against background
     def balance_contrast(self):
+        '''
+        Adjusts image values to make arrow holes easier to detect against each
+        different background color
+
+        Args:
+            None
+
+        Returns:
+            None if successful, True if not
+        '''
         # Function settings
         keys = ['red', 'blue', 'black']
         pct_max = .01
@@ -326,13 +376,19 @@ class target_reader:
         self.stage_images.append(cv2.cvtColor(layers, cv2.COLOR_GRAY2RGB))
         return None
 
-    # find_shots function, uses blob detection to collect keypoints of shots and
-    # draws shot boundaries on image
     def find_shots(self):
+        '''
+        Uses blob detection to collect keypoint data (position and radius) for
+        each shot
+
+        Args:
+            None
+
+        Returns:
+            None if successful, True if not
+        '''
         # Sets blob detection parameters
         params = cv2.SimpleBlobDetector_Params()
-        #params.minThreshold = 0
-        #params.maxThreshold = 255
         params.minDistBetweenBlobs = 0
         params.filterByArea = True
         params.minArea = 30
@@ -360,8 +416,17 @@ class target_reader:
         self.stage_images.append(self.image.copy())
         return None
 
-    # get_shot_data function, gathers hole information into a dataframe
     def get_shot_data(self):
+        '''
+        Derives shot coordinates and scores from keypoint data (position and
+        radius) and gathers all target data into the class DataFrame 'df'
+
+        Args:
+            None
+
+        Returns:
+            None if successful, True if not
+        '''
         # Function settings
         pct_smallest = .2
         overlap_penalty = .85
