@@ -73,6 +73,7 @@ class target_reader:
         image = cv2.imread(filename, 1)
         if type(image) == type(None):
             return 'Could not read image file'
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         self.orig_image = image
         self.image = image.copy()
 
@@ -112,7 +113,7 @@ class target_reader:
         min_area_ratio = .3
 
         # Converts colorspaces and resize images for edge detection
-        img = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        img = self.image.copy()
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         height = int(gray_width / img.shape[1] * img.shape[0])
         gray = cv2.resize(gray, (gray_width, height))
