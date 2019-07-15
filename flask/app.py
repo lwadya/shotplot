@@ -1,21 +1,20 @@
-# Flask imports
-from flask import Flask
-from flask import request, render_template
-
-# Target Reader imports
 import os
+import sys
 import numpy as np
+from flask import Flask, request, render_template
+
+root_dir = os.path.dirname(sys.path[0])
+sys.path.append(os.path.join(root_dir, 'code'))
 from target_reader import target_reader
 
 app = Flask(__name__)
 
 # Default settings
-img_dir = ('/Users/lukaswadya/dataScience/metis/metisgh/metis_work/05_kojak/'
-           'img/app_test')
+img_dir = os.path.join(root_dir, 'sample_targets')
 trg_size = 400
 shot_size = trg_size / 100
 min_hmap_value = .9
-max_hmap_value = .3
+max_hmap_value = .25
 coord_bins = 11
 
 # Recommendation strings
@@ -89,7 +88,7 @@ def homepage():
                 'mean_score': mean_score,
                 'mean_op_score': mean_op_score,
                 'mean_error': mean_error,
-                'reco_list': reco_list,
+                'recos': reco_list,
                 'score_hist': score_hist,
                 'score_hmap': score_hmap,
                 'op_score_hist': op_score_hist,
@@ -137,9 +136,9 @@ def get_reco_list(x_vals, y_vals, actual_score, op_score):
     reco_list = []
 
     hori_std = x_vals.std()
-    hori_idx = np.searchsorted(reco_grp_std, hori_std)
+    hori_idx = np.searchsorted(reco_grp_std, hori_std / trg_size)
     vert_std = y_vals.std()
-    vert_idx = np.searchsorted(reco_grp_std, vert_std)
+    vert_idx = np.searchsorted(reco_grp_std, vert_std / trg_size)
     hori_reco = reco_grp_base % (reco_grp_hori, reco_grp_hori_all[hori_idx])
     vert_reco = reco_grp_base % (reco_grp_vert, reco_grp_vert_all[vert_idx])
 
