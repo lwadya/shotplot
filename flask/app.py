@@ -2,6 +2,7 @@ import os
 import sys
 import numpy as np
 from flask import Flask, request, render_template
+from werkzeug.utils import secure_filename
 
 root_dir = os.path.dirname(sys.path[0])
 sys.path.append(os.path.join(root_dir, 'code'))
@@ -10,7 +11,7 @@ from target_reader import target_reader
 app = Flask(__name__)
 
 # Default settings
-img_dir = os.path.join(root_dir, 'sample_targets')
+img_dir = os.path.join(root_dir, 'flask/static/img/temp')
 trg_size = 400
 shot_size = trg_size / 100
 min_hmap_value = .9
@@ -50,9 +51,15 @@ score_step = trg_size * tr.score_step / tr.out_width
 @app.route("/", methods=["POST", "GET"])
 def homepage():
     if request.method == 'POST':
-        filename = request.form.get('filename')
-        fullpath = os.path.join(img_dir, filename)
-        error = tr.run(fullpath)
+        img = request.files['filename']
+        filename = img.filename
+        if filename:
+            filename = secure_filename(filename)
+            fullpath = os.path.join(img_dir, filename)
+            img.save(fullpath)
+            error = tr.run(fullpath)
+        else:
+            error = 'No filename specified'
 
         if error:
             shots = stats = None

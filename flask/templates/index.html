@@ -3,31 +3,34 @@
   <head>
     <meta charset="utf-8">
     <title>Shot Plot</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+    </script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <link rel="stylesheet"
       href="{{ url_for('static', filename='stylesheets/index.css') }}">
   </head>
+
   <body>
-
-    <div class="page">
-
+    <a name="top"></a>
     <div class="title">
       <img src="/static/img/lg_logo.png" class="image_title">
     </div>
 
     <div class="form">
-      <form action="/" method='POST'>
-        <input type="file" name="filename" id="select_file" onchange="form.submit()" style="display:none">
-        <input type="button" value="Upload Target Image" id="upload_button" onclick="document.getElementById('select_file').click()">
-        <input type="submit" method="get" style="display:none">
+      <form action="/" method="POST" enctype="multipart/form-data">
+        <input type="file" name="filename" id="select_file"
+          onchange="form.submit()" style="display:none">
+        <input type="button" value="Upload Target Image" id="upload_button"
+          onclick="document.getElementById('select_file').click()">
+        <input type="submit" style="display:none">
       </form>
     </div>
 
     <div class="results">
       {% if filename %}
         {% if error %}
-          <p>Uh, oh: {{ error }}</p>
+          <p>Uh, oh! {{ error }}.</p>
         {% else %}
           <div id="summary">
             <h2 class="section_label">Score Report</h2>
@@ -39,6 +42,7 @@
               <div id="score_hmap"></div>
             </div>
           </div>
+
           <div id="charts">
             <h2 class="section_label">Shot Chart</h2>
             <div id="charts_align">
@@ -48,6 +52,7 @@
               <span id="hori_hmap"></span>
             </div>
           </div>
+
           <div id="recos">
             <h2 class="section_label">Recommendations</h2>
             <ul class="reco_list">
@@ -56,24 +61,34 @@
               {% endfor %}
             </ul>
           </div>
-          <div class="page_end">
-            <img src="/static/img/sm_logo.png" width=50px height=50px>
-          </div>
-
         {% endif %}
       {% endif %}
 
       {% if not filename or error %}
         <div class="help">
-          <img src="/static/img/help.png" width=200px height=200px>
+          <img src="/static/img/help.png" class="img_help">
           <p>For best results make sure target stands out from background and
             all four corners are visible.
           </p>
         </div>
       {% endif %}
 
-    </div>
+      <div class="page_end">
+        <a href="#top">
+          <img src="/static/img/sm_logo.png" class="img_end">
+        </a>
+      </div>
 
+      <div class="footer">
+        <p>
+          Developed by Lukas Wadya:
+          <a href="https://www.wadya.com" target="_blank">Blog</a> |
+          <a href="https://www.linkedin.com/in/lukaswadya/" target="_blank">
+            LinkedIn
+          </a> |
+          <a href="https://github.com/lwadya" target="_blank">GitHub</a>
+        </p>
+      </div>
     </div>
 
     <script>
@@ -213,7 +228,8 @@
                       .data(s_hmap)
                       .enter()
                       .append("rect")
-                      .attr("x", function(d,i) { return i*s_hmap_step+bar_buffer; })
+                      .attr("x", function(d,i) {
+                        return i*s_hmap_step+bar_buffer; })
                       .attr("y", 0)
                       .attr("height", hmap_size)
                       .attr("width", Math.ceil(s_hmap_step))
@@ -375,7 +391,6 @@
                       .attr("font-weight", "bold")
                       .attr("font-size", "1.1em")
                       .attr("fill", "black");
-
     </script>
 
   </body>

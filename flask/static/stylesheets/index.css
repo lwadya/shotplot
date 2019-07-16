@@ -1,8 +1,7 @@
-.page {
+body {
   text-align: center;
   margin: auto;
   width: 55%;
-  padding-top: 6em;
   font-family: sans-serif;
   padding-bottom: 3em;
 }
@@ -12,8 +11,8 @@
 }
 
 .image_title {
-  max-width:90%;
-  max-height:90%;
+  max-width: 90%;
+  padding-top: 6em;
 }
 
 #upload_button {
@@ -114,9 +113,38 @@ a:link, a:visited {
 .help {
   padding-top: 1em;
   display: inline-block;
-  width: 250px;
+  width: 40%;
+}
+
+.img_help {
+  width: 100%;
 }
 
 .page_end {
   padding-top: 4em;
+}
+
+.img_end {
+  width: 10%
+}
+
+.link_back {
+  font-size: 1em;
+  font-weight: 300;
+  letter-spacing: .15em;
+  margin-top: 3em;
+  display: inline-block;
+  padding: .7em;
+  border: .07em solid #777;
+}
+
+.footer{
+  margin-top: 1.5em;
+  color: #555;
+  font-size: .85em;
+  font-weight: 300;
+}
+
+.footer a{
+  color: #000;
 }
