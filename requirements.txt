@@ -1,5 +1,13 @@
-Flask==1.0.3
+Click==7.0
+Flask==1.1.1
+gunicorn==19.9.0
+itsdangerous==1.1.0
+Jinja2==2.10.1
+MarkupSafe==1.1.1
 numpy==1.16.4
-opencv-python==4.1.0.25
+opencv-python==3.4.2.17
 pandas==0.24.2
-Werkzeug==0.15.4
+python-dateutil==2.8.0
+pytz==2019.1
+six==1.12.0
+Werkzeug==0.15.5
