@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Shot Plot</title>
+    <title>ShotPlot</title>
     <script
       src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
     </script>
@@ -14,23 +14,32 @@
   <body>
     <a name="top"></a>
     <div class="title">
-      <img src="/static/img/lg_logo.png" class="image_title">
+      <a href='/'>
+        <img src="/static/img/lg_logo.png" class="image_title">
+      </a>
     </div>
 
     <div class="form">
       <form action="/" method="POST" enctype="multipart/form-data">
         <input type="file" name="filename" id="select_file"
           onchange="form.submit()" style="display:none">
-        <input type="button" value="Upload Target Image" id="upload_button"
+        <input type="button" value="Upload Target Image" class="form_button"
           onclick="document.getElementById('select_file').click()">
         <input type="submit" style="display:none">
+        <span class="form_span">or</span>
+        <button class="form_button" type="button"
+          onclick="window.location.href='/samples'">
+          Pick Sample Target
+        </button>
       </form>
     </div>
 
     <div class="results">
       {% if filename %}
         {% if error %}
-          <p>Uh, oh! {{ error }}.</p>
+          <div id="failure">
+            <p>Uh, oh! {{ error }}.</p>
+          </div>
         {% else %}
           <div id="summary">
             <h2 class="section_label">Score Report</h2>

@@ -15,7 +15,7 @@ body {
   padding-top: 6em;
 }
 
-#upload_button {
+.form_button {
   font-size: 1em;
   font-weight: bold;
   padding: .75em 1.25em;
@@ -24,6 +24,11 @@ body {
   cursor: pointer;
   -webkit-border-radius: 5px;
   border-radius: 5px;
+}
+
+.form_span {
+  padding-left: .8em;
+  padding-right: .8em;
 }
 
 .results {
@@ -53,13 +58,17 @@ a:link, a:visited {
   border: .07em solid #000;
 }
 
-.div_name {
-  display: inline-block;
+.results {
+  text-align: center;
 }
 
-.failure {
-  font-size: 1.2em;
+#failure p {
+  font-size: 1em;
   font-weight: 500;
+  line-height: 1.5em;
+  width: 70%;
+  display: inline-block;
+  padding-bottom: 1em;
 }
 
 #summary, #recos, #charts {
@@ -68,19 +77,13 @@ a:link, a:visited {
   padding: .5em 1em 2em 1em;
 }
 
-#recos {
+.section_label {
+  text-align: center;
+}
+
+#summary_content {
   text-align: left;
-  padding-left: 3em;
-  padding-right: 3em;
-  padding-bottom: 1em;
-}
-
-.reco_list {
-  padding-right: 2em;
-}
-
-.reco_item {
-  padding-bottom: .5em;
+  display: inline-block;
 }
 
 #charts_align {
@@ -101,19 +104,25 @@ a:link, a:visited {
   margin-left: 1.5em;
 }
 
-.section_label {
-  text-align: center;
+#recos {
+  text-align: left;
+  padding-left: 3em;
+  padding-right: 3em;
+  padding-bottom: 1em;
 }
 
-#summary_content {
-  text-align: left;
-  display: inline-block;
+.reco_list {
+  padding-right: 2em;
+}
+
+.reco_item {
+  padding-bottom: .5em;
 }
 
 .help {
   padding-top: 1em;
   display: inline-block;
-  width: 40%;
+  width: 35%;
 }
 
 .img_help {
@@ -147,4 +156,35 @@ a:link, a:visited {
 
 .footer a{
   color: #000;
+}
+
+.sample_help {
+  display: inline-block;
+  width: 80%;
+}
+
+.samples {
+  padding-top: 1em;
+  display: inline-block;
+  width: 60%;
+}
+
+.sample_div {
+  padding-bottom: 1em;
+}
+
+.sample_button {
+  border = none;
+  max-width: 100%;
+  max-height: 100%;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.sample_img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }

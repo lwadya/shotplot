@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ShotPlot</title>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='stylesheets/index.css') }}">
+  </head>
+
+  <body>
+    <a name="top"></a>
+    <div class="title">
+      <a href='/'>
+        <img src="/static/img/lg_logo.png" class="image_title">
+      </a>
+    </div>
+
+    <div class="results">
+      <div class="sample_help">
+        Click on a sample image to load it into <b>ShotPlot</b>:
+      </div>
+
+      <div class="samples">
+        {% if images %}
+          <form action="/" method="POST">
+            {% for image in images %}
+              <div class="sample_div">
+                <button type="submit" name="sample" value="{{ image }}"
+                  class="sample_button">
+                  <img src="{{ image }}" class="sample_img" alt="{{ image }}">
+                </button>
+              </div>
+            {% endfor %}
+          </form>
+        {% endif %}
+      </div>
+
+      <div class="page_end">
+        <a href="#top">
+          <img src="/static/img/sm_logo.png" class="img_end">
+        </a>
+      </div>
+
+      <div class="footer">
+        <p>
+          Developed by Lukas Wadya:
+          <a href="https://www.wadya.com" target="_blank">Blog</a> |
+          <a href="https://www.linkedin.com/in/lukaswadya/" target="_blank">
+            LinkedIn
+          </a> |
+          <a href="https://github.com/lwadya" target="_blank">GitHub</a>
+        </p>
+      </div>
+    </div>
+
+  </body>
+</html>

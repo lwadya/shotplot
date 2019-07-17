@@ -49,7 +49,7 @@ class target_reader:
         self.score_step = out_width * 2 / self.cm_width
         return None
 
-    def run(self, filename):
+    def run(self, filename=None, file_obj=None):
         '''
         Runs all methods for image processing and scoring. Returns None if
         analysis is successful, error message if not. Results are saved in the
@@ -57,6 +57,7 @@ class target_reader:
 
         Args:
             filename (str): filepath of the image to analyze
+            file_obj (werkzeug file object): file object containing image
 
         Returns:
             None if successful, str containing error message if not
@@ -70,7 +71,18 @@ class target_reader:
         self.df = None
 
         # Loads image from file if it exists
-        image = cv2.imread(filename, 1)
+        if type(file_obj) == type(None):
+            image = cv2.imread(filename, 1)
+
+        # Loads image from werkzeug file object
+        else:
+            try:
+                np_img = np.fromstring(file_obj.read(), np.uint8)
+                image = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+            except:
+                image = None
+
+        # Convert image to proper color channels
         if type(image) == type(None):
             return 'Could not read image file'
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -216,7 +228,10 @@ class target_reader:
                                                cv2.RETR_EXTERNAL,
                                                cv2.CHAIN_APPROX_SIMPLE)
             areas = [cv2.contourArea(contour) for contour in contours]
-            idx = np.argsort(areas)[-1]
+            try:
+                idx = np.argsort(areas)[-1]
+            except:
+                return True
             M = cv2.moments(contours[idx])
             center_x = int(M["m10"] / M["m00"])
             center_y = int(M["m01"] / M["m00"])
