@@ -26,7 +26,7 @@ ss = shot_stats(trg_size, tr.score_step, tr.out_width)
 
 
 @app.route("/", methods=["POST", "GET"])
-def homepage():
+def index():
     '''
     Gathers input from user and displays results using a Flask HTML template
 
