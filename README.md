@@ -56,10 +56,16 @@ In order to evaluate the performance of my image processing code, I manually ide
 | Test Set Precision | .983  |
 
 |                         | Not Labeled a Shot   | Labeled a Shot |
-| ----------------------- | -------------------- | -------------- |
+| ----------------------- | :------------------: | :------------: |
 | **Not Actually a Shot** | N/A\*                | 9              |
 | **Actually a Shot**     | 25                   | 530            |
 
 \* Too many to count
 
 In practice, I was constantly testing the performance of my code against different targets in my 'training' set and making adjustments when necessary. I certainly became more dilligent about testing after an early mishap resulted in my algorithm 'overfitting' a specific kind of target image and perform significantly worse against others. Another issue I encountered is the subjectivity of shot identification: determining how many shots created some holes is difficult if not impossible. Fortunately, manually identifying most shots is straightforward so I do not think the evaluation statistics would change significantly based on another person's shot identifications.
+
+![Detail images of shots that are difficult to identify](img/details.jpg)
+
+### The App
+
+[ShotPlot is live on Heroku](https://lw-shotplot.herokuapp.com), feel free to try it out! I built the app in **Flask** and relied heavily upon the **D3.js** library for visualization. This project was my first foray into **D3** and I greatly valued the flexibility and customizability it offers. Other visualization software and libraries like **Tableau** and **Matplotlib** had less startup cost but couldn't faithfully reproduce what I had sketched out for the app. Using **D3** also leaves open the possibility of adding interactive features to the charts themselves in future development.
