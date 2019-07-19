@@ -60,7 +60,7 @@ In order to evaluate the performance of my image processing code, I manually ide
 | **Not Actually a Shot** | N/A\*                | 9              |
 | **Actually a Shot**     | 25                   | 530            |
 
-\* Too many to count
+*\* Too many to count*
 
 In practice, I was constantly testing the performance of my code against different targets in my 'training' set and making adjustments when necessary. I certainly became more dilligent about testing after an early mishap resulted in my algorithm 'overfitting' a specific kind of target image and perform significantly worse against others. Another issue I encountered is the subjectivity of shot identification: determining how many shots created some holes is difficult if not impossible. Fortunately, manually identifying most shots is straightforward so I do not think the evaluation statistics would change significantly based on another person's shot identifications.
 
